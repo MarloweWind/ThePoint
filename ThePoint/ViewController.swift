@@ -16,6 +16,7 @@ final class ViewController: UIViewController {
     private var playerScoreLabel = UILabel()
     private let hitButton = UIButton(type: .system)
     private let standButton = UIButton(type: .system)
+    private let startButton = UIButton(type: .system)
     
     private var enemyScore = 0
     private var playerScore = 0
@@ -68,20 +69,28 @@ final class ViewController: UIViewController {
         hitButton.setTitle("Hit", for: .normal)
         hitButton.tintColor = .white
         hitButton.titleLabel?.font = UIFont(name: "Copperplate-Bold", size: 40)
+        hitButton.isHidden = true
         hitButton.addTarget(self, action: #selector(didTapHitButton), for: .touchUpInside)
         
         standButton.translatesAutoresizingMaskIntoConstraints = false
         standButton.setTitle("Stand", for: .normal)
         standButton.tintColor = .white
         standButton.titleLabel?.font = UIFont(name: "Copperplate-Bold", size: 40)
-//        standButton.isHidden = true
+        standButton.isHidden = true
         standButton.addTarget(self, action: #selector(didTapStandButton), for: .touchUpInside)
+        
+        startButton.translatesAutoresizingMaskIntoConstraints = false
+        startButton.setTitle("Start", for: .normal)
+        startButton.tintColor = .white
+        startButton.titleLabel?.font = UIFont(name: "Copperplate-Bold", size: 40)
+        startButton.addTarget(self, action: #selector(didTapStartButton), for: .touchUpInside)
         
         view.addSubview(gameNameLabel)
         view.addSubview(enemyScoreLabel)
         view.addSubview(playerScoreLabel)
         view.addSubview(hitButton)
         view.addSubview(standButton)
+        view.addSubview(startButton)
         
         NSLayoutConstraint.activate([
             
@@ -99,20 +108,102 @@ final class ViewController: UIViewController {
             
             standButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             standButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            
+            startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
 
             ])
         
     }
     
     
+    // MARK: - Private methods
+    
+    func gameState(state: String) {
+        gameNameLabel.text = state
+        hitButton.isHidden = true
+        standButton.isHidden = true
+        startButton.isHidden = false
+        deck = [1, 1, 1, 1,
+                2, 2, 2, 2,
+                3, 3, 3, 3,
+                4, 4, 4, 4,
+                5, 5, 5, 5,
+                6, 6, 6, 6,
+                7, 7, 7, 7,
+                8, 8, 8, 8,
+                9, 9, 9, 9,
+                10, 10, 10, 10,
+                10, 10, 10, 10,
+                10, 10, 10, 10,
+                10, 10, 10, 10,
+                ]
+        startButton.setTitle("Restart?", for: .normal)
+    }
+    
+    func gameStateCheck() {
+        if playerScore > 21 {
+            gameState(state: "Player Lose")
+        } else if enemyScore > 21 {
+            gameState(state: "Dealer Lose")
+        } else if enemyScore == playerScore {
+            gameState(state: "Draw")
+        }
+    }
+    
+    func enemyPlay() {
+        if enemyScore == 0 {
+            enemyScore += deck[0]
+            deck.removeFirst()
+            enemyScoreLabel.text = "Dealer score \(String(enemyScore))"
+        } else if enemyScore < 16 {
+            enemyScore += deck[0]
+            deck.removeFirst()
+            enemyScoreLabel.text = "Dealer score \(String(enemyScore))"
+        } else {
+            gameStateCheck()
+        }
+    }
+    
+    
     // MARK: - Actions
 
     @objc func didTapHitButton() {
-        print("hit")
+        playerScore += deck[0]
+        deck.removeFirst()
+        playerScoreLabel.text = "Your score \(String(playerScore))"
+        enemyPlay()
+        gameStateCheck()
+        print(deck)
     }
     
     @objc func didTapStandButton() {
-        print("stand")
+        gameStateCheck()
+        enemyPlay()
+        if enemyScore > playerScore {
+            gameState(state: "Dealer Win")
+        } else if playerScore > enemyScore {
+            gameState(state: "Player Win")
+        } else if enemyScore == 21 && playerScore == 21 {
+            gameState(state: "Draw")
+        } else if enemyScore > 21 {
+            gameState(state: "Player Win")
+        }
+        print(deck)
+    }
+    
+    @objc func didTapStartButton() {
+        
+        playerScore = 0
+        enemyScore = 0
+        playerScoreLabel.text = "Your score \(String(playerScore))"
+        enemyScoreLabel.text = "Dealer score \(String(enemyScore))"
+        
+        deck.shuffle()
+        hitButton.isHidden = false
+        standButton.isHidden = false
+        startButton.isHidden = true
+        gameNameLabel.text = "The Point"
     }
     
     
