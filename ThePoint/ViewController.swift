@@ -141,13 +141,25 @@ final class ViewController: UIViewController {
         startButton.setTitle("Restart?", for: .normal)
     }
     
-    func gameStateCheck() {
+    func hitGameStateCheck() {
         if playerScore > 21 {
-            gameState(state: "Player Lose")
+            gameState(state: "Dealer Win")
         } else if enemyScore > 21 {
-            gameState(state: "Dealer Lose")
-        } else if enemyScore == playerScore {
+            gameState(state: "Player Win")
+        } else if enemyScore == playerScore && enemyScore > 18 && playerScore > 18 {
             gameState(state: "Draw")
+        }
+    }
+    
+    func standGameCheck() {
+        if enemyScore > playerScore {
+            gameState(state: "Dealer Win")
+        } else if playerScore > enemyScore {
+            gameState(state: "Player Win")
+        } else if enemyScore == 21 && playerScore == 21 {
+            gameState(state: "Draw")
+        } else if enemyScore > 21 {
+            gameState(state: "Player Win")
         }
     }
     
@@ -161,7 +173,7 @@ final class ViewController: UIViewController {
             deck.removeFirst()
             enemyScoreLabel.text = "Dealer score \(String(enemyScore))"
         } else {
-            gameStateCheck()
+            hitGameStateCheck()
         }
     }
     
@@ -173,27 +185,17 @@ final class ViewController: UIViewController {
         deck.removeFirst()
         playerScoreLabel.text = "Your score \(String(playerScore))"
         enemyPlay()
-        gameStateCheck()
-        print(deck)
+        hitGameStateCheck()
     }
     
     @objc func didTapStandButton() {
-        gameStateCheck()
+        hitGameStateCheck()
+        standGameCheck()
         enemyPlay()
-        if enemyScore > playerScore {
-            gameState(state: "Dealer Win")
-        } else if playerScore > enemyScore {
-            gameState(state: "Player Win")
-        } else if enemyScore == 21 && playerScore == 21 {
-            gameState(state: "Draw")
-        } else if enemyScore > 21 {
-            gameState(state: "Player Win")
-        }
-        print(deck)
+        hitButton.isHidden = true
     }
     
     @objc func didTapStartButton() {
-        
         playerScore = 0
         enemyScore = 0
         playerScoreLabel.text = "Your score \(String(playerScore))"
