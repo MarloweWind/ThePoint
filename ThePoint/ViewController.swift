@@ -141,40 +141,61 @@ final class ViewController: UIViewController {
         startButton.setTitle("Restart?", for: .normal)
     }
     
-    func hitGameStateCheck() {
-        if playerScore > 21 {
+    func hitGameStateCheck() {        
+        switch (playerScore, enemyScore) {
+          case let (player, _) where player > 21:
             gameState(state: "Dealer Win")
-        } else if enemyScore > 21 {
+
+          case let (_, enemy) where enemy > 21:
             gameState(state: "Player Win")
-        } else if enemyScore == playerScore && enemyScore > 18 && playerScore > 18 {
+
+          case let (player, enemy) where player == enemy && player > 18 && enemy > 18:
             gameState(state: "Draw")
+
+          default:
+            break
         }
+
     }
     
     func standGameCheck() {
-        if enemyScore > playerScore {
+        switch (playerScore, enemyScore) {
+          case let (_, enemy) where enemyScore > playerScore:
             gameState(state: "Dealer Win")
-        } else if playerScore > enemyScore {
+
+          case let (player, _) where playerScore > enemyScore:
             gameState(state: "Player Win")
-        } else if enemyScore == 21 && playerScore == 21 {
+
+          case let (player, enemy) where player == 21 && enemy == 21:
             gameState(state: "Draw")
-        } else if enemyScore > 21 {
+
+          case let (_, enemy) where enemy > 21:
             gameState(state: "Player Win")
+            
+        case let (player, enemy) where player == enemy && player > 16 && enemy > 16:
+          gameState(state: "Draw")
+
+          default:
+            break
         }
     }
     
     func enemyPlay() {
-        if enemyScore == 0 {
+        switch enemyScore {
+        case 0:
             enemyScore += deck[0]
             deck.removeFirst()
             enemyScoreLabel.text = "Dealer score \(String(enemyScore))"
-        } else if enemyScore < 16 {
+            
+        case 1..<16:
             enemyScore += deck[0]
             deck.removeFirst()
             enemyScoreLabel.text = "Dealer score \(String(enemyScore))"
-        } else {
+            
+        default:
             hitGameStateCheck()
         }
+
     }
     
     
