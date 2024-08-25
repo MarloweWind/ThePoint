@@ -124,20 +124,6 @@ final class ViewController: UIViewController {
         hitButton.isHidden = true
         standButton.isHidden = true
         startButton.isHidden = false
-        deck = [1, 1, 1, 1,
-                2, 2, 2, 2,
-                3, 3, 3, 3,
-                4, 4, 4, 4,
-                5, 5, 5, 5,
-                6, 6, 6, 6,
-                7, 7, 7, 7,
-                8, 8, 8, 8,
-                9, 9, 9, 9,
-                10, 10, 10, 10,
-                10, 10, 10, 10,
-                10, 10, 10, 10,
-                10, 10, 10, 10,
-                ]
         startButton.setTitle("Restart?", for: .normal)
     }
     
@@ -160,10 +146,10 @@ final class ViewController: UIViewController {
     
     func standGameCheck() {
         switch (playerScore, enemyScore) {
-          case let (_, enemy) where enemyScore > playerScore:
+        case (_, _) where enemyScore > playerScore:
             gameState(state: "Dealer Win")
 
-          case let (player, _) where playerScore > enemyScore:
+        case (_, _) where playerScore > enemyScore:
             gameState(state: "Player Win")
 
           case let (player, enemy) where player == 21 && enemy == 21:
@@ -221,7 +207,20 @@ final class ViewController: UIViewController {
         enemyScore = 0
         playerScoreLabel.text = "Your score \(String(playerScore))"
         enemyScoreLabel.text = "Dealer score \(String(enemyScore))"
-        
+        deck = [1, 1, 1, 1,
+                2, 2, 2, 2,
+                3, 3, 3, 3,
+                4, 4, 4, 4,
+                5, 5, 5, 5,
+                6, 6, 6, 6,
+                7, 7, 7, 7,
+                8, 8, 8, 8,
+                9, 9, 9, 9,
+                10, 10, 10, 10,
+                10, 10, 10, 10,
+                10, 10, 10, 10,
+                10, 10, 10, 10,
+                ]
         deck.shuffle()
         hitButton.isHidden = false
         standButton.isHidden = false
